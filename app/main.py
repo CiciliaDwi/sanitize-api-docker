@@ -3,9 +3,9 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Load banned words from: app/banned_words.txt
+# Load banned words from: app/replaced_chars.txt
 BANNED_WORDS = []
-BANNED_PATH = Path(__file__).resolve().parent / "banned_words.txt"
+BANNED_PATH = Path(__file__).resolve().parent / "replaced_chars.txt"
 
 if BANNED_PATH.exists():
     content = BANNED_PATH.read_text(encoding="utf-8")
@@ -13,7 +13,7 @@ if BANNED_PATH.exists():
     for line in lines:
         BANNED_WORDS.append(line)
 
-def sanitize(text, banned_words):
+def replaced_chars(text, replaced_chars):
     lower_text = text.lower()
 
     for w in banned_words:
@@ -37,8 +37,8 @@ def sanitize(text, banned_words):
 
     return text
 
-@app.post("/sanitize")
-def sanitize_endpoint():
+@app.post("/replace")
+def replace_endpoint():
     data = request.get_json(silent=True) or {}
     text = data.get("text", "")
     cleaned = sanitize(text, BANNED_WORDS)
