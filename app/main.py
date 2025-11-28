@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Load banned words from: app/replaced_chars.txt
 BANNED_WORDS = []
-BANNED_PATH = Path(__file__).resolve().parent / "replaced_chars.txt"
+BANNED_PATH = Path(__file__).resolve().parent / "replaced_chars"
 
 if BANNED_PATH.exists():
     content = BANNED_PATH.read_text(encoding="utf-8")
@@ -41,8 +41,8 @@ def replaced_chars(text, replaced_chars):
 def replace_endpoint():
     data = request.get_json(silent=True) or {}
     text = data.get("text", "")
-    cleaned = sanitize(text, BANNED_WORDS)
-    return jsonify({"cleaned": cleaned})
+    cleaned = replace_chars(text)
+    return jsonify({"result": cleaned})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
